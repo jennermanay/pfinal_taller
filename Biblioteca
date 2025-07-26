@@ -1,0 +1,115 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package TF_Grupo03;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author EDSON
+ */
+public class Biblioteca {
+    // Atributos de la clase biblioteca, Listas que solo admitiran objetos de la clase que corresponde a cada una
+    private List<Libro> libros;
+    private List<Usuario> usuarios;
+    private List<Prestamo> prestamos;
+    private int nextPrestamoId;
+
+    //Constructor de la clase biblioteca
+    public Biblioteca() {
+        this.libros = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.prestamos = new ArrayList<>();
+        this.nextPrestamoId = 1;
+    }
+
+    // METODO PARA AGREGAR LIBRO NUEVO
+    public void agregarLibro(Libro libro) {
+        libros.add(libro);
+    }
+    // METODO PARA AGREGAR USUARIO NUEVO
+    public void registrarUsuario(Usuario usuario) {
+        usuarios.add(usuario);
+    }
+
+    // METODO PARA PRESTAR LIBRO (devuelve true/false) 
+    public boolean prestarLibro(int ISBN, int usuarioId) {
+        Libro libro = buscarLibro(ISBN); // Busca el libro por ISBN
+        Usuario usuario = buscarUsuario(usuarioId); //Busca libro por ID
+        
+        // condicional de error
+        if (libro == null || usuario == null || !libro.isDisponible()) {
+            return false;
+        }
+        // si no se cumple la condicion, esta todo bien
+        libro.marcarPrestado();
+        // Crea un nuevo prestamo con un ID que se autoincrementa
+        Prestamo prestamo = new Prestamo(nextPrestamoId++, libro, usuario);
+        prestamos.add(prestamo);
+        return true;
+    }
+
+    // METODO PARA DEVOLVER LIBRO
+    public boolean devolverLibro(int ISBN) {
+        for (Prestamo prestamo : prestamos) { // Recorre todos los prestamos
+            
+            // Busca un prestamo activo (sin fecha de devolución) con el ISBN que le pide en el menu principal
+            if (prestamo.getLibro().getISBN() == ISBN && prestamo.getFechaDevolucion() == null) {
+                prestamo.devolver();
+                prestamo.getLibro().marcarDevuelto();
+                return true;
+            }
+        }
+        return false;
+    }
+    // METODOS PRIVADOS PARA ESTA CLASE, AYUDA A LA UBICACION DE LIBROS Y USUARIOS DE OTROS METODOS
+    // METODO PARA BUSCAR LIBRO
+    private Libro buscarLibro(int ISBN) {
+        for (Libro libro : libros) { // Recorre la lista de libros
+            if (libro.getISBN() == ISBN) {  
+                return libro;
+            }
+        }
+        return null;
+    }
+    //METODO PARA BUSCAR USUARIO
+    private Usuario buscarUsuario(int id) {
+        for (Usuario usuario : usuarios) { //Recorre la lista de usuarios
+            if (usuario.getId() == id) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // METODO PARA MOSTRAR LIBROS DISPONIBLES
+    public void mostrarLibrosDisponibles() {
+        System.out.println("\n--- Libros Disponibles ---");
+        for (Libro libro : libros) {
+            if (libro.isDisponible()) {
+                System.out.println(libro.getInfo());
+            }
+        }
+    }
+    // METODO PARA MOSTRAR PRESTAMOS ACTIVOS
+    public void mostrarPrestamosActivos() {
+        System.out.println("\n--- Prestamos Activos ---");
+        for (Prestamo prestamo : prestamos) {
+            if (prestamo.getFechaDevolucion() == null) {
+                System.out.println(prestamo.getInfo());
+            }
+        }
+    }
+    // METODO PARA MOSTRAR USUARIOS
+    public void mostrarUsuarios() {
+    System.out.println("\n--- Usuarios Registrados ---");
+    for (Usuario usuario : usuarios) {
+        System.out.println(usuario.getInfo());
+    }
+}
+    
+}
