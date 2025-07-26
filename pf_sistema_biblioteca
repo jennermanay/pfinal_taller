@@ -1,0 +1,167 @@
+
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package TF_Grupo03;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+/**
+ *
+ * @author EDSON
+ */
+public class PF_SISTEMA_BIBLIOTECA_UTP {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        System.out.println("BIENVENIDO AL SISTEMA DE BLIBLIOTECA DE LA UTP");
+        Biblioteca biblioteca = new Biblioteca();
+        Scanner InTeclado = new Scanner(System.in);
+        int opcion = -1;
+
+        do {
+            try {
+                //MENU PRINCIPAL
+                System.out.println("\n--- SISTEMA DE BIBLIOTECA ---");
+                System.out.println("1. Registrar nuevo libro");
+                System.out.println("2. Registrar nuevo usuario");
+                System.out.println("3. Prestar libro");
+                System.out.println("4. Devolver libro");
+                System.out.println("5. Mostrar libros disponibles");
+                System.out.println("6. Mostrar prestamos activos");
+                System.out.println("7. Mostrar todos los usuarios");
+                System.out.println("0. Salir");
+                System.out.print("Seleccione una opcion: ");
+                
+                opcion = InTeclado.nextInt();
+                InTeclado.nextLine(); // Limpiar el buffer para que no se quede con la respuesta anterior
+
+                switch (opcion) {
+                    case 1: // OPCION 1: Registrar nuevo libro
+                        try {
+                            System.out.print("Ingrese ISBN del libro (numero entero): ");
+                            int isbn = InTeclado.nextInt();
+                            InTeclado.nextLine(); // Limpiar buffer
+                            System.out.print("Ingrese titulo del libro: ");
+                            String titulo = InTeclado.nextLine();
+                            System.out.print("Ingrese autor del libro: ");
+                            String autor = InTeclado.nextLine();
+                            
+                            biblioteca.agregarLibro(new Libro(isbn, titulo, autor));
+                            System.out.println("-----------------------------");
+                            System.out.println("Libro registrado con exito!!!");
+                            System.out.println("-----------------------------");
+                        } catch (InputMismatchException e) {
+                            System.out.println("Error: El ISBN debe ser un numero entero");
+                            InTeclado.nextLine(); // Limpiar buffer del error
+                        }
+                        break;
+                        
+                    case 2: // OPCION 2: Registrar nuevo usuario
+                        try {
+                            System.out.print("Ingrese ID del usuario (numero entero): ");
+                            int id = InTeclado.nextInt();
+                            InTeclado.nextLine(); // Limpiar buffer
+                            System.out.print("Ingrese nombre del usuario: ");
+                            String nombre = InTeclado.nextLine();
+                            System.out.print("Ingrese correo del usuario: ");
+                            String correo = InTeclado.nextLine();
+                            
+                            biblioteca.registrarUsuario(new Usuario(id, nombre, correo));
+                            System.out.println("-----------------------------");
+                            System.out.println("Usuario registrado con exito!");
+                            System.out.println("-----------------------------");
+                        } catch (InputMismatchException e) {
+                            System.out.println("-----------------------------");
+                            System.out.println("Error: El ID debe ser un numero entero");
+                            System.out.println("-----------------------------");
+                            InTeclado.nextLine(); // Limpiar buffer del error
+                        }
+                        break;
+                        
+                    case 3: // OPCION 3: Prestar libro
+                        try {
+                            System.out.print("Ingrese ISBN del libro a prestar: ");
+                            int isbnPrestamo = InTeclado.nextInt();
+                            System.out.print("Ingrese ID del usuario: ");
+                            int usuarioId = InTeclado.nextInt();
+                            
+                            if (biblioteca.prestarLibro(isbnPrestamo, usuarioId)) {
+                                System.out.println("-----------------------------");
+                                System.out.println("Libro prestado con exito");
+                                System.out.println("-----------------------------");
+                            } else {
+                                System.out.println("-----------------------------");
+                                System.out.println("Error: Libro no disponible o datos incorrectos");
+                                System.out.println("-----------------------------");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("-----------------------------");
+                            System.out.println("Error: ISBN y ID deben ser numeros enteros");
+                            System.out.println("-----------------------------");
+                            InTeclado.nextLine(); // Limpiar buffer de error
+                        }
+                        break;
+                        
+                    case 4: // OPCION 4: Devolver libro
+                        try {
+                            System.out.print("Ingrese ISBN del libro a devolver: ");
+                            int isbnDevolucion = InTeclado.nextInt();
+                            
+                            if (biblioteca.devolverLibro(isbnDevolucion)) {
+                                System.out.println("-----------------------------");
+                                System.out.println("Libro devuelto con exito");
+                                System.out.println("-----------------------------");
+                            } else {
+                                System.out.println("-----------------------------");
+                                System.out.println("Error: No se encontro el prestamo");
+                                System.out.println("-----------------------------");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("-----------------------------");
+                            System.out.println("Error: El ISBN debe ser un numero entero");
+                            System.out.println("-----------------------------");
+                            InTeclado.nextLine(); // Limpiar buffer de error
+                        }
+                        break;
+                        
+                    case 5: // OPCION 5: Mostrar libros disponibles
+                        biblioteca.mostrarLibrosDisponibles();
+                        break;
+                        
+                    case 6: // OPCION 6: Mostrar prestamos activos
+                        biblioteca.mostrarPrestamosActivos();
+                        break;
+                        
+                    case 7: // OPCION 7: Mostrar todos los usuarios
+                        biblioteca.mostrarUsuarios();
+                        break;
+                        
+                    case 0: //OPCION 0: SALIR DEL SISTEA
+                        System.out.println("-----------------------------");
+                        System.out.println("Saliendo del sistema...");
+                        System.out.println("-----------------------------");
+                        break;
+                        
+                    default: // EN CASO MARQUE UNA OPCION INCORRECTA
+                        System.out.println("-----------------------------");
+                        System.out.println("Opcion no valida");
+                        System.out.println("-----------------------------");
+                }
+            } catch (Exception e) {
+                System.out.println("-----------------------------");
+                System.out.println("Error inesperado: " + e.getMessage());
+                System.out.println("-----------------------------");
+                InTeclado.nextLine(); // Limpiar buffer en caso de error
+            }
+        } while (opcion != 0);
+
+     //   InTeclado.close();
+    
+    }
+    
+}
